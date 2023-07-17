@@ -1,3 +1,4 @@
+// import { ContactList, Filter } from 'components';
 import { ContactList, Filter } from 'components';
 import ContactForm from './ContactForm/ContactForm';
 import { Component } from 'react';
@@ -7,16 +8,28 @@ class App extends Component {
     contacts: [],
     filter: '',
   };
-
+  componentDidMount() {
+    const savedContacts = localStorage.getItem('contacts');
+    this.setState(() => ({
+      contacts: JSON.parse(savedContacts),
+    }));
+  }
   onHandleSubmit = newContact => {
     const existedContact = this.state.contacts.find(
       contact => contact.name.toLowerCase() === newContact.name.toLowerCase()
     );
-    return existedContact
-      ? alert(`${newContact.name} is already in your contacts`)
-      : this.setState(prevState => ({
+    if (existedContact) {
+      alert(`${newContact.name} is already in your contacts`);
+    } else {
+      this.setState(
+        prevState => ({
           contacts: [...prevState.contacts, newContact],
-        }));
+        }),
+        () => {
+          localStorage.setItem('contacts', JSON.stringify(this.state.contacts));
+        }
+      );
+    }
   };
   onChangeFilter = ev => {
     this.setState({ filter: ev.currentTarget.value });
@@ -29,9 +42,14 @@ class App extends Component {
     );
   };
   onDeleteBtn = id => {
-    return this.setState(prevState => ({
-      contacts: prevState.contacts.filter(contact => contact.id !== id),
-    }));
+    return this.setState(
+      prevState => ({
+        contacts: prevState.contacts.filter(contact => contact.id !== id),
+      }),
+      () => {
+        localStorage.setItem('contacts', JSON.stringify(this.state.contacts));
+      }
+    );
   };
 
   render() {

@@ -10,9 +10,10 @@ export default class ContactForm extends Component {
   };
   onSubmitForm = ev => {
     ev.preventDefault();
-    this.setState({ id: nanoid(5) });
-    ev.target.reset();
-    return this.props.handleSubmit(this.state);
+    this.setState({ id: nanoid(5) }, () => {
+      ev.target.reset();
+      return this.props.handleSubmit(this.state);
+    });
   };
 
   handleChange = ev => {
