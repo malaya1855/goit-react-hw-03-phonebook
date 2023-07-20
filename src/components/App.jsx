@@ -1,4 +1,3 @@
-// import { ContactList, Filter } from 'components';
 import { ContactList, Filter } from 'components';
 import ContactForm from './ContactForm/ContactForm';
 import { Component } from 'react';
@@ -10,9 +9,12 @@ class App extends Component {
   };
   componentDidMount() {
     const savedContacts = localStorage.getItem('contacts');
-    this.setState(() => ({
-      contacts: JSON.parse(savedContacts),
-    }));
+    const parsedContacts = JSON.parse(savedContacts);
+    if (parsedContacts) {
+      this.setState(() => ({
+        contacts: parsedContacts,
+      }));
+    }
   }
   onHandleSubmit = newContact => {
     const existedContact = this.state.contacts.find(
