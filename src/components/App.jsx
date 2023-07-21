@@ -11,11 +11,15 @@ class App extends Component {
     const savedContacts = localStorage.getItem('contacts');
     const parsedContacts = JSON.parse(savedContacts);
     if (parsedContacts) {
-      this.setState(() => ({
-        contacts: parsedContacts,
-      }));
+      this.setState({ contacts: parsedContacts });
     }
   }
+  componentDidUpdate(_, prevState) {
+    if (prevState.contacts !== this.state.contacts) {
+      localStorage.setItem('contacts', JSON.stringify(this.state.contacts));
+    }
+  }
+
   onHandleSubmit = newContact => {
     const existedContact = this.state.contacts.find(
       contact => contact.name.toLowerCase() === newContact.name.toLowerCase()
@@ -23,14 +27,9 @@ class App extends Component {
     if (existedContact) {
       alert(`${newContact.name} is already in your contacts`);
     } else {
-      this.setState(
-        prevState => ({
-          contacts: [...prevState.contacts, newContact],
-        }),
-        () => {
-          localStorage.setItem('contacts', JSON.stringify(this.state.contacts));
-        }
-      );
+      this.setState(prevState => ({
+        contacts: [...prevState.contacts, newContact],
+      }));
     }
   };
   onChangeFilter = ev => {
@@ -44,14 +43,9 @@ class App extends Component {
     );
   };
   onDeleteBtn = id => {
-    return this.setState(
-      prevState => ({
-        contacts: prevState.contacts.filter(contact => contact.id !== id),
-      }),
-      () => {
-        localStorage.setItem('contacts', JSON.stringify(this.state.contacts));
-      }
-    );
+    return this.setState(prevState => ({
+      contacts: prevState.contacts.filter(contact => contact.id !== id),
+    }));
   };
 
   render() {
